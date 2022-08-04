@@ -1,0 +1,23 @@
+const puppeteer = require("puppeteer");
+require("dotenv").config();
+const url = process.env.BASEURL;
+const course = process.env.COURSE_URL;
+const userID = process.env.ID;
+const password = process.env.PASSWORD;
+(async () => {
+  const browser = await puppeteer.launch({ headless: false });
+  const page = await browser.newPage();
+  await page.goto(url);
+  const nav = await page.$(`nav.relative > div.hidden a `);
+  await nav.click();
+  await page.keyboard.type(userID, { delay: 100 });
+  await page.keyboard.press("Tab");
+  await page.keyboard.type(password, { delay: 100 });
+  await page.keyboard.press("Tab");
+  await page.keyboard.press("Tab");
+  await page.keyboard.press("Enter");
+  await page.waitForSelector(`form.p-4`, { hidden: true, timeout: 10000 });
+  await page.goto(course);
+  const link = await page.$(`a.mt-2[href^="https://player.vimeo.com"]`);
+  await link.click();
+})();
